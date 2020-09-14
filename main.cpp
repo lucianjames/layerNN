@@ -53,7 +53,7 @@ public:
 
 
   //init net params in uniform dist of specified size:
-  void paraminit(const float& x,
+  virtual void paraminit(const float& x,
                  const float& y){
     typename uniform_real_distribution<float>::param_type prms (x, y);
     this->dist.param (prms);
@@ -72,7 +72,7 @@ public:
   }
 
   //feedforwards with linear (/no) activation function
-  void feedforwards(const vector<float>& inp){
+  virtual void feedforwards(const vector<float>& inp){
     for (int neuron = 0; neuron < this->a.size(); neuron++){
       dot(inp, this->w[neuron], this->pfa[neuron]);
       this->pfa[neuron] += this->b[neuron];
@@ -81,7 +81,7 @@ public:
   }
 
   //backprop for linear neurons:
-  void backprop(const vector<float>& nd, //Next layer Delta
+  virtual void backprop(const vector<float>& nd, //Next layer Delta
                 const vector<vector<float>>& ntpw //Next layer TransPosed Weights
                 ){
     //set own tpw so previous layer can backprop
@@ -93,8 +93,17 @@ public:
       }
   }
 
+  virtual void calcnablas(){
+    //calc nabla b:
+    this->nb = this->d;
+    //calc nabla w:
+    for (int n = 0; n < this->a.size(); n++){
+        vectbyscalarmultiply(this->a, this->d[n], this->nw[n]);
+      }
+  }
+
   //update network parameters based on nw and nb
-  void updateparams(const float& eta){
+  virtual void updateparams(const float& eta){
     //update biases
     for (int n = 0; n < this->a.size(); n++){
       this->b[n] -= (this->nb[n] * eta);
@@ -182,37 +191,51 @@ public:
 };
 
 int main(){
-  sigmoidlayer l1(2, 2);
-  sigmoidoutputlayer l2(2, 2);
+  //network hyperparameters:
+  float eta = 1;
 
-  l1.paraminit(-1, 1);
-  l2.paraminit(-1, 1);
+  //create vector of pointers to class objects to define the network:
+  vector<baselayer*> lyrs;
+  sigmoidlayer* l1 = new sigmoidlayer(2,2);
+  sigmoidlayer* l2 = new sigmoidlayer(2,2);
+  sigmoidlayer* l3 = new sigmoidlayer(2,2);
+  sigmoidlayer* l4 = new sigmoidlayer(2,2);
+  sigmoidoutputlayer* outputlayer = new sigmoidoutputlayer(2,2);
+  lyrs.push_back (l1);
+  lyrs.push_back (l2);
+  lyrs.push_back (l3);
+  lyrs.push_back (l4);
+  lyrs.push_back (outputlayer);
 
-  vector<float> inp = {0.2, 0.3};
+  //init network params:
+  for (auto& l : lyrs){
+    l->paraminit(-1, 1);
+  }
+
+  //dummy gradient descent test:
+  vector<float> inp = {0.8, 0.9};
   vector<float> desiredout = {0, 0};
-
-  for (int i = 0; i < 20; i++){
-    //run a feedforwards and backprop pass:
-    l1.feedforwards(inp);
-    l2.feedforwards(l1.a);
-    l2.backprop(desiredout);
-    l1.backprop(l2.d, l2.tpw);
-    //calc nabla_bs:
-    l2.nb = l2.d;
-    l1.nb = l1.d;
-    //calc nabla_ws:
-    for (int n = 0; n < l2.a.size(); n++){
-      vectbyscalarmultiply(l2.a, l2.d[n], l2.nw[n]);
+  for (int loops = 0; loops < 100; loops++){
+    //run forwards pass:
+    l1->feedforwards(inp);
+    for (int l = 1; l < lyrs.size(); l++){
+      lyrs[l]->feedforwards(lyrs[l-1]->a);
     }
-    for (int n = 0; n < l1.a.size(); n++){
-      vectbyscalarmultiply(l1.a, l1.d[n], l1.nw[n]);
+    //run backprop pass:
+    outputlayer->backprop(desiredout);
+    for (int l = lyrs.size()-2; l > -1; l--){
+        lyrs[l]->backprop(lyrs[l+1]->d, lyrs[l+1]->tpw);
+      }
+    //calc nablas for all layers:
+    for (auto& l : lyrs){
+      l->calcnablas();
     }
-    //update parameters of all layers
-    l1.updateparams(1);
-    l2.updateparams(1);
-    //print out activations to terminal:
-    cout << "l2 activations:" << endl;
-    printV(l2.a);
+    //update all layer params:
+    for (auto& l : lyrs){
+      l->updateparams(eta);
+    }
+    //print out network activation values:
+    printV(outputlayer->a);
   }
   return 0;
 }
