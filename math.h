@@ -47,6 +47,8 @@ std::vector<float> vectbyscalarmultiply(const std::vector<float>& a,
 				  std::vector<float>& product){
   if (a.size() != product.size()){
     std::cout << "WARN: scalarmultiply received vectors of different size for 'a' and 'product'" << std::endl;
+		std::cout << a.size() << std::endl;
+		std::cout << product.size() << std::endl;
   }
   for (int item = 0; item < a.size(); item++){
     product[item] = (a[item] * b);
