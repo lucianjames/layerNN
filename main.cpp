@@ -9,6 +9,7 @@
 #include "lossfuncs.h"
 #include "baselayer.h"
 #include "sigmoidlayer.h"
+#include "misclayers.h"
 using namespace std;
 
 int main(){
@@ -38,6 +39,7 @@ int main(){
 
   //create vector of pointers to class objects to define the network:
   vector<baselayer*> lyrs;
+  inputlayer* l0 = new inputlayer(2);
   sigmoidlayer* l1 = new sigmoidlayer(2,5);
   sigmoidlayer* l2 = new sigmoidlayer(5,2);
   sigmoidlayer* l3 = new sigmoidlayer(2,10);
@@ -58,9 +60,10 @@ int main(){
   vector<float> inp = {0.8, 0.9};
   vector<float> desiredout = {0, 0};
 
+  l0->a = inp;
+
   for (int loops = 0; loops < 100; loops++){
     //run forwards pass:
-    l1->feedforwards(inp);
     for (int l = 1; l < lyrs.size(); l++){
       lyrs[l]->feedforwards(lyrs[l-1]->a);
     }
@@ -70,7 +73,6 @@ int main(){
         lyrs[l]->backprop(lyrs[l+1]->d, lyrs[l+1]->tpw);
       }
     //calc nablas for all layers:
-    l1->calcnablas(inp);
     for (int l = 1; l < lyrs.size(); l++){
       lyrs[l]->calcnablas(lyrs[l-1]->a);
     }
