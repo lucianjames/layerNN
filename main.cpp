@@ -12,6 +12,27 @@
 using namespace std;
 
 int main(){
+  //load MNIST dataset:
+  cout << "Loading MNIST data" << endl;
+  vector<vector<float>> imgs = loadimages();
+  vector<int> labels = loadlabels();
+  vector<vector<float>> testimgs = loadtestimages();
+  vector<int> testlabels = loadtestlabels();
+  cout << "Data loaded" << endl;
+  cout << "Normalising data" << endl;
+  for (auto& i : imgs){
+    for (auto& i2 : i){
+      i2 = i2/255;
+    }
+  }
+  for (auto& i : testimgs){
+    for (auto& i2 : i){
+      i2 = i2/255;
+    }
+  }
+  cout << "Data normalised" << endl;
+
+
   //network hyperparameters:
   float eta = 1;
 

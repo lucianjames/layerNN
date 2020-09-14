@@ -9,7 +9,7 @@ int chars_to_int (const char* buf){
 
 std::vector<int> loadlabels(){
   std::ifstream t_lab;
-  t_lab.open("train-labels-idx1-ubyte", std::ios::in | std::ios::binary);
+  t_lab.open("MNIST/train-labels-idx1-ubyte", std::ios::in | std::ios::binary);
   //process file data
   char buff[4];
   t_lab.read(buff, 4);
@@ -32,7 +32,7 @@ std::vector<int> loadlabels(){
 
 std::vector<std::vector<float>> loadimages(){
   std::ifstream t_img;
-  t_img.open("train-images-idx3-ubyte", std::ios::in | std::ios::binary);
+  t_img.open("MNIST/train-images-idx3-ubyte", std::ios::in | std::ios::binary);
   //process file data
   char buff[4];
   t_img.read(buff, 4);
@@ -64,7 +64,7 @@ std::vector<std::vector<float>> loadimages(){
 
 std::vector<int> loadtestlabels(){
   std::ifstream t_lab;
-  t_lab.open("t10k-labels-idx1-ubyte", std::ios::in | std::ios::binary);
+  t_lab.open("MNIST/t10k-labels-idx1-ubyte", std::ios::in | std::ios::binary);
   //process file data
   char buff[4];
   t_lab.read(buff, 4);
@@ -87,7 +87,7 @@ std::vector<int> loadtestlabels(){
 
 std::vector<std::vector<float>> loadtestimages(){
   std::ifstream t_img;
-  t_img.open("t10k-images-idx3-ubyte", std::ios::in | std::ios::binary);
+  t_img.open("MNIST/t10k-images-idx3-ubyte", std::ios::in | std::ios::binary);
   //process file data
   char buff[4];
   t_img.read(buff, 4);
