@@ -49,7 +49,7 @@ public:
   //feedforwards with linear (/no) activation function
   void feedforwards(const vector<float>& inp){
     for (int neuron = 0; neuron < this->a.size(); neuron++){
-      dot(inp, this->w[neuron], this->a[neuron]);
+      dot(inp, this->w[neuron], this->pfa[neuron]);
       this->pfa[neuron] += this->b[neuron];
     }
     this->a = this->pfa;
@@ -70,18 +70,36 @@ public:
     this->a.resize(ls); //resize activations
     this->pfa.resize(ls); //resize pre (activation) function activations
   }
-
 };
 
+class sigmoidlayer : public baselayer{
+private:
+
+public:
+  sigmoidlayer(const float& pls, //previous layer size
+               const float& ls //layer size
+               ) : baselayer(pls, ls){
+      // Add any layer-specific construction code here, if necessary
+  }
+
+  //feedforwards with sigmoid activation function
+  void feedforwards(const vector<float>& inp){
+    for (int neuron = 0; neuron < this->a.size(); neuron++){
+      dot(inp, this->w[neuron], this->pfa[neuron]);
+      this->pfa[neuron] += this->b[neuron];
+    }
+    vectsigmoid(this->pfa, this->a);
+  }
+};
 
 int main(){
-  baselayer l1(2, 2);
-  baselayer l2(2, 2);
+  sigmoidlayer l1(2, 2);
+  sigmoidlayer l2(2, 2);
 
   l1.paraminit(-1, 1);
   l2.paraminit(-1, 1);
 
-  vector<float> inp = {0.3, 0.2};
+  vector<float> inp = {9999, 9999};
 
   //propogate input through net:
   l1.feedforwards(inp);
