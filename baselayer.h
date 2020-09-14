@@ -88,13 +88,13 @@ public:
       }
   }
 
-  virtual void calcnablas(){
+  virtual void calcnablas(const vector<float>& pla){ //Previous Layer Activations
     //calc nabla b:
     this->nb = this->d;
     //calc nabla w:
     for (int n = 0; n < this->a.size(); n++){
-        vectbyscalarmultiply(this->a, this->d[n], this->nw[n]);
-      }
+      vectbyscalarmultiply(pla, this->d[n], this->nw[n]);
+    }
   }
 
   //update network parameters based on nw and nb
