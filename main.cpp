@@ -38,10 +38,10 @@ int main(){
 
   //create vector of pointers to class objects to define the network:
   vector<baselayer*> lyrs;
-  sigmoidlayer* l1 = new sigmoidlayer(2,2);
-  sigmoidlayer* l2 = new sigmoidlayer(2,2);
-  sigmoidlayer* l3 = new sigmoidlayer(2,2);
-  sigmoidlayer* l4 = new sigmoidlayer(2,2);
+  sigmoidlayer* l1 = new sigmoidlayer(2,5);
+  sigmoidlayer* l2 = new sigmoidlayer(5,2);
+  sigmoidlayer* l3 = new sigmoidlayer(2,10);
+  sigmoidlayer* l4 = new sigmoidlayer(10,2);
   sigmoidoutputlayer* outputlayer = new sigmoidoutputlayer(2,2);
   lyrs.push_back (l1);
   lyrs.push_back (l2);
@@ -70,8 +70,9 @@ int main(){
         lyrs[l]->backprop(lyrs[l+1]->d, lyrs[l+1]->tpw);
       }
     //calc nablas for all layers:
-    for (auto& l : lyrs){
-      l->calcnablas();
+    l1->calcnablas(inp);
+    for (int l = 1; l < lyrs.size(); l++){
+      lyrs[l]->calcnablas(lyrs[l-1]->a);
     }
     //update all layer params:
     for (auto& l : lyrs){
