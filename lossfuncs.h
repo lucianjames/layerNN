@@ -4,8 +4,8 @@
 
 //=======all-round error funcs:========
 
-float MSE(const vector<float>& outactivs,
-	  const vector<float>& desiredout,
+float MSE(const std::vector<float>& outactivs,
+	  const std::vector<float>& desiredout,
 	  float& cost){
   cost = 0;
   for (int neuron = 0; neuron < outactivs.size(); neuron++){
@@ -14,8 +14,8 @@ float MSE(const vector<float>& outactivs,
   return cost;
 }
 
-float CE(const vector<float>& outactivs,
-	 const vector<float>& desiredout,
+float CE(const std::vector<float>& outactivs,
+	 const std::vector<float>& desiredout,
 	 float& cost){
   cost = 0;
   for (int neuron = 0; neuron < outactivs.size(); neuron++){
